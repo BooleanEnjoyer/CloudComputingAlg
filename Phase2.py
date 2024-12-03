@@ -15,19 +15,20 @@ def gelr(a, i, p, q):
     a_prim[i][p] = 0
     global_u = sum([u(a, i) for i in tasks])
     global_u_prim = sum([u(a_prim, i) for i in tasks])
-    return global_u - global_u_prim
+    return global_u - global_u_primD
 
 def u(a, i):
-    return max(a[i][j] * exec_times[i, j] for j in resources)
+    return 1 / max(a[i][j] * exec_times[i, j] * len(mts(a, j)) for j in resources)
 
 def min_global(a, j):
+    # gracze jednocześnie używający zasobu j
     mts = mts(a, j)
-    # negative spelr task set
-    nsts = []
+    # gracze zyskujący na przeniesieniu
+    nsts = [] #negative spelr task set
     for i in mts:
-        q = min_single(a, i, j)
+        q = min_single(a, i, j) # wybór alternatywnego zasobu
         if q != -1:
-            spelr_val = spelr(a, i, j, q)
+            spelr_val = spelr(a, i, j, q) # koszt dla danego gracza
             if spelr_val < 0:
                 nsts.append((i, q))
 
@@ -49,24 +50,26 @@ def mr(a, i):
 
 def eval_optimize(a):
     i = 1
-    flag = TurnaroundTime
+    flag = True
     while flag:
         if i == 1:
             flag = False
-            ms = sorted(mr(a, i), key=lambda j: exec_times(i, j), reverse=True)
-            for j in ms:
-                q = min_global(a, j)
-                if q != -1:
-                    p = min_single(a, q, j)
-                    ralloc(a, q, j, p)
-                    flag = True
-            if i == n:
-                if flag == False:
-                    return
-                else:
-                    i = 1
+
+        # przeciążone zasoby używane przez gracza z indeksem i
+        ms = sorted(mr(a, i), key=lambda j: exec_times(i, j), reverse=True)
+        for resource_from in ms:
+            player = min_global(a, resource_from) # wybór gracza
+            if player != -1:
+                resource_to = min_single(a, player, resource_from) # wybór zasobu
+                ralloc(a, player, resource_from, resource_to) # przeniesienie
+                flag = True
+        if i == n:
+            if flag == False:
+                return
             else:
-                i = i + 1
+                i = 1
+        else:
+            i = i + 1
 
 def ralloc(a, i, p, q):
     a[i][q] += a[i][p]
