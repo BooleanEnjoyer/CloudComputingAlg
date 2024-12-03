@@ -27,15 +27,32 @@ def independent_optimization(tasks, task_subtasks, resources, costs, exec_times,
             name=f"Budget_Task_{i}"
         )
 
-        # Constraint 10
+        # # Constraint 10
+        # for k in task_subtasks[i]:
+        #     model.addConstr(quicksum(b[i, k, j] for j in resources) == 1, name=f"Subtask_{i}_{k}_Assignment")
+
+    print(f"Shape of b (tasks x subtasks x resources):")
+    print(f"Tasks: {len(tasks)}")
+    print(f"Subtasks: {max(len(task_subtasks[i]) for i in tasks)}")  # Max number of subtasks across all tasks
+    print(f"Resources: {len(resources)}")
+    for i in tasks:
         for k in task_subtasks[i]:
-            model.addConstr(quicksum(b[i, k, j] for j in resources) == 1, name=f"Subtask_{i}_{k}_Assignment")
+            for j in resources:
+                print(i, k, j)
+                print("Bikj")
+                print(b[i, k, j])
+            # Skip if the (i, k) combination doesn't exist in exec_times
+            # if (i, k) in exec_times:
+            #     model.addConstr(quicksum(b[i, k, j] for j in resources) == 1, name=f"Subtask_{i}_{k}_Assignment")
+            # else:
+            #     print(f"Skipping missing subtask (i={i}, k={k})")
+
 
     # Constraint 11
     for j in resources:
         for i in tasks:
             model.addConstr(
-                quicksum(b[i, k, j] for k in task_subtasks) <= 1,
+                quicksum(b[i, k, j] for k in task_subtasks[i]) <= 1,
                 name=f"Resource_{j}_Task_{i}_Capacity"
             )
 
