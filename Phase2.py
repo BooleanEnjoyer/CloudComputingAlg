@@ -1,31 +1,55 @@
+import copy
+
+tasks = [1, 2, 3]
+price_vector = [1, 1.2, 1.5, 1.8, 2]
+resources = [1, 2, 3, 4, 5]
+exec_times = {
+    (1, 1): 6, (1, 2): 5, (1, 3): 4, (1, 4): 3.5, (1, 5): 3,
+    (2, 1): 5, (2, 2): 4.2, (2, 3): 3.6, (2, 4): 3, (2, 5): 2.8,
+    (3, 1): 4, (3, 2): 3.5, (3, 3): 3.2, (3, 4): 2.8, (3, 5): 2.4
+}
+task_subtasks = {
+    1: [1, 2, 3],
+    2: [1, 2, 3, 4],
+    3: [1, 2, 3, 4, 5]
+}
+tl = [1, 2, 3, 4]
+
+n = len(tasks)
+
 def min_single(a, i, p):
-    spelrs = [(j,spelr(a, i, p, j)) for j in resources]
+    spelrs = [(j,spelr(a, i, p, j)) for j in resources if j != p]
     min_spelr = min(spelrs, key=lambda x: x[1])
     return min_spelr[0] if min_spelr[1] < 0 else -1
 
 def spelr(a, i, p, q):
     a_prim = copy.deepcopy(a)
-    a_prim[i][q] += a_prim[i][p]
-    a_prim[i][p] = 0
+    a_prim[i-1][q-1] += a_prim[i-1][p-1]
+    a_prim[i-1][p-1] = 0
     return (u(a, i) - u(a_prim, i))
 
 def gelr(a, i, p, q):
     a_prim = copy.deepcopy(a)
-    a_prim[i][q] += a_prim[i][p]
-    a_prim[i][p] = 0
+    a_prim[i-1][q-1] += a_prim[i-1][p-1]
+    a_prim[i-1][p-1] = 0
     global_u = sum([u(a, i) for i in tasks])
     global_u_prim = sum([u(a_prim, i) for i in tasks])
-    return global_u - global_u_primD
+    return global_u - global_u_prim
+
+def overload_penalty(a, j):
+    mts_val = mts(a, j)
+    return len(mts_val) if len(mts_val) > 0 else 1 
 
 def u(a, i):
-    return 1 / max(a[i][j] * exec_times[i, j] * len(mts(a, j)) for j in resources)
+    t = max(a[i-1][j-1] * exec_times[i, j] * overload_penalty(a, j) for j in resources)
+    return 1 / t if t > 0 else 9999999999
 
 def min_global(a, j):
     # gracze jednocześnie używający zasobu j
-    mts = mts(a, j)
+    mts_val = mts(a, j)
     # gracze zyskujący na przeniesieniu
     nsts = [] #negative spelr task set
-    for i in mts:
+    for i in mts_val:
         q = min_single(a, i, j) # wybór alternatywnego zasobu
         if q != -1:
             spelr_val = spelr(a, i, j, q) # koszt dla danego gracza
@@ -40,37 +64,66 @@ def min_global(a, j):
 
 # multiplexing task set of resource j
 def mts(a, j):
-    res = [i for i in tasks if a[i][j] > 0]
+    res = [i for i in tasks if a[i-1][j-1] > 0]
     return res if len(res) > 1 else []
 
 # multiplexing resources of task S_i
 def mr(a, i):
     res = [j for j in resources if i in mts(a, j)]
-    return res if len(res) > 1 else []
+    return res
 
 def eval_optimize(a):
     i = 1
     flag = True
-    while flag:
+    while True:
         if i == 1:
             flag = False
 
         # przeciążone zasoby używane przez gracza z indeksem i
-        ms = sorted(mr(a, i), key=lambda j: exec_times(i, j), reverse=True)
+        ms = sorted(mr(a, i), key=lambda j: exec_times[i, j] * overload_penalty(a, j), reverse=True)
+        print(ms, i, n)
         for resource_from in ms:
             player = min_global(a, resource_from) # wybór gracza
             if player != -1:
                 resource_to = min_single(a, player, resource_from) # wybór zasobu
                 ralloc(a, player, resource_from, resource_to) # przeniesienie
+                print(a)
                 flag = True
         if i == n:
             if flag == False:
-                return
+                return a
             else:
                 i = 1
         else:
             i = i + 1
 
 def ralloc(a, i, p, q):
-    a[i][q] += a[i][p]
-    a[i][p] = 0
+    print(i, p, q)
+    a[i-1][q-1] += a[i-1][p-1]
+    a[i-1][p-1] = 0
+
+a = [
+    [0, 0, 0, 1, 1],
+    [0, 0, 1, 1, 1],
+    [1, 1, 1, 0, 1]
+]
+
+eval_optimize([
+    [0, 0, 0, 1, 1],
+    [0, 0, 1, 1, 1],
+    [1, 1, 1, 0, 1]
+])
+
+a_star_prev = [[0, 0, 0, 1, 1], [0, 0, 1, 1, 1], [1, 2, 1, 0, 0]]
+
+a_star = [[0, 0, 0, 1, 1], [0, 0, 1, 1, 1], [1, 2, 1, 0, 0]]
+
+print(u(a, 1), u(a_star_prev, 1))
+print(u(a, 2), u(a_star_prev, 2))
+print(u(a, 3), u(a_star_prev, 3))
+
+print("---------")
+
+print(u(a_star_prev, 1), u(a_star, 1))
+print(u(a_star_prev, 2), u(a_star, 2))
+print(u(a_star_prev, 3), u(a_star, 3))
