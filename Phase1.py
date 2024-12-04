@@ -41,7 +41,7 @@ def independent_optimization(tasks, task_subtasks, resources, costs, exec_times,
 
         # Constraint 12 (simplified max)
         model.addConstr(
-            T_turnaround >= quicksum(tl) + quicksum(exec_times[task_index, j] * b[k, j] for k in task_subtasks[task_index] for j in resources),
+            T_turnaround >= quicksum(tl) + quicksum(exec_times[task_index, j] * b[i, j] for i in task_subtasks[task_index] for j in resources),
             name="TurnaroundTime"
         )
 
@@ -49,6 +49,11 @@ def independent_optimization(tasks, task_subtasks, resources, costs, exec_times,
 
         allocation_info = []
         allocation_matrix = []
+
+        # print("OUTPUT:")
+        # for i in task_subtasks[task_index]:
+        #     for idx, j in enumerate(resources):
+        #         print(b[i, j])
 
         if model.Status == GRB.OPTIMAL:
             task_info = f"Task {task_index}:"
