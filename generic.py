@@ -14,7 +14,7 @@ def global_optimization(tasks, task_subtasks, resources, costs, exec_times, dead
                     'tol 1e-8',     # Adjust tolerance
                     'minlp_maximum_iterations 1000', \
                     # minlp iterations with integer solution
-                    'minlp_max_iter_with_int_sol 100', \
+                    'minlp_max_iter_with_int_sol 300', \
                     # treat minlp as nlp
                     'minlp_as_nlp 0', \
                     # nlp sub-problem max iterations
@@ -35,22 +35,30 @@ def global_optimization(tasks, task_subtasks, resources, costs, exec_times, dead
     for i in tasks:
         for j in resources:
             a[i,j] = m.Var(value=0, lb=0, integer=True, name=f"a_{i}_{j}")
+    T_turnaround = {}
+    for i in tasks:
+        T_turnaround[i] = m.Var(value=0, name=f"T_turnaround_{i}")
+    
     
     def overload_penalty(j):
         return sum(a[i,j] for i in tasks)
 
-    def task_time(i):
-        t = 0
-        for j in resources:
-            t = m.max3(t, m.min3(1, a[i,j]) * exec_times[i,j] * overload_penalty(j))
-        return t
+    # def task_time(i):
+    #     t = 0
+    #     for j in resources:
+    #         t = m.max3(t, m.min3(1, a[i,j]) * exec_times[i,j] * overload_penalty(j))
+    #     return t
 
     def u(i):
-        t = task_time(i)
+        t = T_turnaround[i]
         e = sum(a[i, j] * costs[i, j] for j in resources)
         return wt * t + we * e
 
     m.Obj(sum(u(i) for i in tasks))
+
+    for i in tasks:
+        for j in resources:
+            m.Equation(T_turnaround[i] >= m.min3(1, a[i, j]) * exec_times[i,j] * overload_penalty(j))
 
     # all subtasks are being done constraint
     for i in tasks:
@@ -62,7 +70,7 @@ def global_optimization(tasks, task_subtasks, resources, costs, exec_times, dead
 
     # deadline constraint
     for i in tasks:
-        m.Equation(task_time(i) <= deadlines[i])
+        m.Equation(T_turnaround[i] <= deadlines[i])
 
     m.solve()
 
