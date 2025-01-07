@@ -8,11 +8,11 @@ better = [
 def global_optimization(tasks, task_subtasks, resources, costs, exec_times, deadlines, budgets, weights, tl):
     wt, we = weights
     m = GEKKO(remote=False)
-    m.options.SOLVER = 1
+    m.options.SOLVER = 3
     m.options.IMODE = 3
     m.solver_options = ['max_iter 500',  # Increase maximum iterations
                     'tol 1e-8',     # Adjust tolerance
-                    'minlp_maximum_iterations 500', \
+                    'minlp_maximum_iterations 1000', \
                     # minlp iterations with integer solution
                     'minlp_max_iter_with_int_sol 100', \
                     # treat minlp as nlp
@@ -58,11 +58,11 @@ def global_optimization(tasks, task_subtasks, resources, costs, exec_times, dead
     
     # budget constraint
     for i in tasks:
-        sum(a[i, j] * costs[i, j] for j in resources) <= budgets[i]
+        m.Equation(sum(a[i, j] * costs[i, j] for j in resources) <= budgets[i])
 
     # deadline constraint
     for i in tasks:
-        task_time(i) <= deadlines[i]
+        m.Equation(task_time(i) <= deadlines[i])
 
     m.solve()
 
