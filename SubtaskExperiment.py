@@ -3,7 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from Phase1Gekko import independent_optimization
 from Phase2 import genetic_optimization
 from generic import global_optimization
-from util import u_global
+from main import u_global
 from Exper1data import exec_times, costs
 import random
 

@@ -1,5 +1,5 @@
 from Phase1Gekko import independent_optimization
-from util import create_costs_matrix, u_global
+from util import create_costs_matrix
 from Phase2 import genetic_optimization
 from generic import global_optimization
 
@@ -24,6 +24,23 @@ from generic import global_optimization
 
 
 # SCENARIO 2 (similar to paper one)
+
+def u_global(a, exec_times, costs, weights):
+    wt, we = weights
+    num_tasks = len(allocation_matrix)
+    num_resources = len(allocation_matrix[0])
+
+    def overload_penalty(j):
+        return sum(a[i][j] for i in range(num_tasks))
+
+    def u_local(i):
+        t = max(min(1, a[i][j]) * exec_times[i + 1, j + 1] * overload_penalty(j) for j in range(num_resources))
+        e = sum(a[i][j] * costs[i + 1, j + 1] for j in range(num_resources))
+        u = wt * t + we * e
+        return 1/u if u > 0 else 0
+
+    return sum(u_local(i) for i in range(num_tasks))
+
 tasks = [1, 2, 3]
 price_vector = [1, 1.2, 1.5, 1.8, 2]
 resources = [1, 2, 3, 4, 5]
@@ -51,6 +68,8 @@ allocation_info, allocation_matrix, obj_value = independent_optimization(tasks, 
 
 optimized_allocation = genetic_optimization(tasks, resources, exec_times, allocation_matrix)
 
+global_optimized = global_optimization(tasks, task_subtasks, resources, costs, exec_times, deadlines, budgets, weights, tl)
+
 print("Allocation Info for All Tasks:\n")
 for task_info in allocation_info:
     print(task_info)
@@ -60,26 +79,14 @@ for task_info in allocation_info:
 print("\nAllocation Matrix for All Tasks:")
 for row in allocation_matrix:
     print(row)
-print(f"\nObjective Value: {obj_value}")
+print(f"\nObjective Value independent: {u_global(allocation_matrix, exec_times, costs, weights)}")
 
 print("\n genetically optimized allocation Matrix")
 for row in optimized_allocation:
     print(row)
+print(f"\nObjective Value genetic: {u_global(optimized_allocation, exec_times, costs, weights)}")
 
-global_optimized = global_optimization(tasks, task_subtasks, resources, costs, exec_times, deadlines, budgets, weights, tl)
 for row in global_optimized:
     print(row)
 
-
-print("Utilities:")
-# print(f"Genetic: {calculate_utilization(optimized_allocation, exec_times, costs, weights)}")
-# print(f"Global: {calculate_utilization(global_optimized, exec_times, costs, weights)}")
-
-
-# print(f"Genetic util: {u(optimized_allocation, exec_times, costs, weights, resources, tasks)}")
-# print(f"Global util: {u(global_optimized, exec_times, costs, weights, resources, tasks)}")
-
-
-
-print(f"Genetic util 2: {u_global(optimized_allocation, exec_times, costs, weights)}")
-print(f"Global util 2: {u_global(global_optimized, exec_times, costs, weights)}")
+print(f"\nObjective Value global: {u_global(global_optimized, exec_times, costs, weights)}")
