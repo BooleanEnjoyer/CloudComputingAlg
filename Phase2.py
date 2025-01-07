@@ -1,6 +1,7 @@
 import copy
 
-def genetic_optimization(tasks, resources, exec_times, a):
+def genetic_optimization(tasks, resources, exec_times, a_input):
+    a = copy.deepcopy(a_input)
     n = len(tasks)
 
     def min_single(a, i, p):
@@ -90,28 +91,28 @@ def genetic_optimization(tasks, resources, exec_times, a):
     
     return eval_optimize(a)
 
-a = [
-    [0, 0, 0, 1, 1],
-    [0, 0, 1, 1, 1],
-    [1, 1, 1, 0, 1]
-]
+# a = [
+#     [0, 0, 0, 1, 1],
+#     [0, 0, 1, 1, 1],
+#     [1, 1, 1, 0, 1]
+# ]
 
-eval_optimize([
-    [0, 0, 0, 1, 1],
-    [0, 0, 1, 1, 1],
-    [1, 1, 1, 0, 1]
-])
+# eval_optimize([
+#     [0, 0, 0, 1, 1],
+#     [0, 0, 1, 1, 1],
+#     [1, 1, 1, 0, 1]
+# ])
 
-a_star_prev = [[0, 0, 0, 1, 1], [0, 0, 1, 1, 1], [1, 2, 1, 0, 0]]
+# a_star_prev = [[0, 0, 0, 1, 1], [0, 0, 1, 1, 1], [1, 2, 1, 0, 0]]
 
-a_star = [[0, 0, 0, 1, 1], [0, 0, 1, 1, 1], [1, 2, 1, 0, 0]]
+# a_star = [[0, 0, 0, 1, 1], [0, 0, 1, 1, 1], [1, 2, 1, 0, 0]]
 
-print(u(a, 1), u(a_star_prev, 1))
-print(u(a, 2), u(a_star_prev, 2))
-print(u(a, 3), u(a_star_prev, 3))
+# print(u(a, 1), u(a_star_prev, 1))
+# print(u(a, 2), u(a_star_prev, 2))
+# print(u(a, 3), u(a_star_prev, 3))
 
-print("---------")
+# print("---------")
 
-print(u(a_star_prev, 1), u(a_star, 1))
-print(u(a_star_prev, 2), u(a_star, 2))
-print(u(a_star_prev, 3), u(a_star, 3))
+# print(u(a_star_prev, 1), u(a_star, 1))
+# print(u(a_star_prev, 2), u(a_star, 2))
+# print(u(a_star_prev, 3), u(a_star, 3))
