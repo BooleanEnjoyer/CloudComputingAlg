@@ -19,7 +19,7 @@ def global_optimization(tasks, task_subtasks, resources, costs, exec_times, dead
     def task_time(i):
         t = 0
         for j in resources:
-            t = m.max3(t, a[i,j] * exec_times[i,j] * overload_penalty(j))
+            t = m.max3(t, m.max3(1, a[i,j]) * exec_times[i,j] * overload_penalty(j))
         return t
 
     def u(i):
