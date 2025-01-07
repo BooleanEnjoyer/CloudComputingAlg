@@ -63,7 +63,7 @@ plt.plot(results[2], label="global", marker='o')
 
 # Add labels, title, and legend
 plt.xlabel("percent of weight going to time")
-# plt.xticks(ticks=range(len(results[0])), labels=[f"{i * 10}%" for i in range(len(results[0]))])
+plt.xticks(ticks=range(len(results[0])), labels=[f"{i * 10}%" for i in range(len(results[0]))])
 plt.ylabel("utility")
 plt.title("weights")
 plt.legend()
