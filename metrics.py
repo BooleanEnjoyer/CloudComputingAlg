@@ -36,7 +36,7 @@ class Analysis:
     def social_justice(self, a_independent, i):
         o = self.u_local(i)
         oi = self.u_local(i, a_independent)
-        return round((o - oi) / oi, 2) if o1 > 0 else 0
+        return round((o - oi) / oi, 2) if oi > 0 else 0
     
     def social_justices(self, a_independent):
         return [self.social_justice(a_independent, i) for i in range(self.num_tasks)]
