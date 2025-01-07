@@ -1,4 +1,4 @@
-from Phase1 import independent_optimization
+from Phase1Gekko import independent_optimization
 from util import create_costs_matrix
 from Phase2 import genetic_optimization
 
@@ -44,7 +44,7 @@ print(costs)
 
 deadlines = {1: 50, 2: 70, 3: 100}
 budgets = {1: 50, 2: 60, 3: 70}
-weights = (0.5, 0.5)
+weights = (0.4, 0.6)
 
 allocation_info, allocation_matrix, obj_value = independent_optimization(tasks, task_subtasks, resources, costs, exec_times, deadlines, budgets, weights, tl)
 
