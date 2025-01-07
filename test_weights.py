@@ -53,6 +53,8 @@ for weights in weightss:
 for result in results:
     print([round(x,2) for x in result])
 
+print(weightss)
+
 # Plot the data
 plt.figure(figsize=(8, 6))
 plt.plot(result[0], label="independent", marker='o')
@@ -68,5 +70,5 @@ plt.legend()
 plt.grid()
 
 # Show the plot
-plt.show()
+plt.savefig("dupa")
 
