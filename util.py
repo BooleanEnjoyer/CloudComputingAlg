@@ -80,3 +80,53 @@ def u_global(a, exec_times, costs, weights):
         return 1 / u if u > 0 else 0
 
     return sum(u_local(i) for i in range(num_tasks))
+
+
+
+# Metody temp
+# resources2 = list(range(1, 101))  # Generate numbers from 1 to 100
+# formatted_resources = f"resources = {resources2}"  # Format as a string
+#
+# # Display the structure in the terminal
+# print(formatted_resources)
+#
+
+
+# def generate_price_vector(size, min_value=1, max_value=3, precision=1):
+#     # Generate random values with specified precision
+#     price_vector = [round(random.uniform(min_value, max_value), precision) for _ in range(size)]
+#     # Format and display the structure
+#     formatted_vector = f"price_vector = {price_vector}"
+#     print(formatted_vector)
+
+
+
+# def generate_exec_times(num_rows, num_columns, min_value=2, max_value=6, precision=1):
+#     exec_times = {}
+#     for row in range(1, num_rows + 1):  # Iterate through rows
+#         for col in range(1, num_columns + 1):  # Iterate through columns
+#             # Generate a random value with specified precision
+#             exec_times[(row, col)] = round(random.uniform(min_value, max_value), precision)
+#
+#     # Format and display the structure
+#     formatted_exec_times = "exec_times = {\n"
+#     for (row, col), value in exec_times.items():
+#         formatted_exec_times += f"    ({row}, {col}): {value},\n"
+#     formatted_exec_times = formatted_exec_times.rstrip(",\n") + "\n}"  # Clean up trailing comma and newline
+#     return formatted_exec_times
+#
+#
+# # Example usage
+# format = generate_exec_times(3, 100)
+# # Generate exec_times with 3 rows and 100 columns
+
+
+
+# def display_costs_matrix_as_dict(costs):
+#     formatted_costs = "costs = {\n"
+#     for (i, j), value in costs.items():
+#         formatted_costs += f"    ({i}, {j}): {value},\n"
+#     formatted_costs = formatted_costs.rstrip(",\n") + "\n}"  # Remove trailing comma and newline
+#     print(formatted_costs)
+#
+# display_costs_matrix_as_dict(costs)
