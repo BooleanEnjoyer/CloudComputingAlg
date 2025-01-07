@@ -1,6 +1,7 @@
 from Phase1Gekko import independent_optimization
 from util import create_costs_matrix
 from Phase2 import genetic_optimization
+from generic import global_optimization
 
 # tl dont have to be number also like amount of tasks technically
 
@@ -44,7 +45,7 @@ print(costs)
 
 deadlines = {1: 50, 2: 70, 3: 100}
 budgets = {1: 50, 2: 60, 3: 70}
-weights = (0.4, 0.6)
+weights = (0.5, 0.5)
 
 allocation_info, allocation_matrix, obj_value = independent_optimization(tasks, task_subtasks, resources, costs, exec_times, deadlines, budgets, weights, tl)
 
@@ -63,4 +64,8 @@ print(f"\nObjective Value: {obj_value}")
 
 print("\n genetically optimized allocation Matrix")
 for row in optimized_allocation:
+    print(row)
+
+global_optimized = global_optimization(tasks, task_subtasks, resources, costs, exec_times, deadlines, budgets, weights, tl)
+for row in global_optimized:
     print(row)
