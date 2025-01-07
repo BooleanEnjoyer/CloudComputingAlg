@@ -12,11 +12,15 @@ def independent_optimization(tasks, task_subtasks, resources, costs, exec_times,
 
     for task_index in tasks:
         m = GEKKO(remote=False)
+        m.options.SOLVER = 1
+        m.solver_options = ['minlp_as_nlp 0',
+                            'minlp_branch_method 1',
+                            'minlp_integer_tol 1e-4']
         b = {}
         for i in task_subtasks[task_index]:
             for j in resources:
                 b[i, j] = m.Var(value=0, integer=True, lb=0, ub=1, name=f"b_{i}_{j}")
-        
+
         T_turnaround = m.Var(value=0, name="T_turnaround")
         m.Obj(we * sum(costs[task_index, j] * b[i, j] for i in task_subtasks[task_index] for j in resources) + wt * T_turnaround)
 
@@ -53,7 +57,7 @@ def independent_optimization(tasks, task_subtasks, resources, costs, exec_times,
                         assigned_resources.append(j)
                         task_row[idx] = 1
                 task_info += f"\n  Subtask {i} is assigned to Resources: {assigned_resources}"
-            
+
             allocation_info.append(task_info)
             allocation_matrix.append(task_row)
 

@@ -1,5 +1,5 @@
 from Phase1Gekko import independent_optimization
-from util import create_costs_matrix
+from util import create_costs_matrix, u_global
 from Phase2 import genetic_optimization
 from generic import global_optimization
 
@@ -69,3 +69,17 @@ for row in optimized_allocation:
 global_optimized = global_optimization(tasks, task_subtasks, resources, costs, exec_times, deadlines, budgets, weights, tl)
 for row in global_optimized:
     print(row)
+
+
+print("Utilities:")
+# print(f"Genetic: {calculate_utilization(optimized_allocation, exec_times, costs, weights)}")
+# print(f"Global: {calculate_utilization(global_optimized, exec_times, costs, weights)}")
+
+
+# print(f"Genetic util: {u(optimized_allocation, exec_times, costs, weights, resources, tasks)}")
+# print(f"Global util: {u(global_optimized, exec_times, costs, weights, resources, tasks)}")
+
+
+
+print(f"Genetic util 2: {u_global(optimized_allocation, exec_times, costs, weights)}")
+print(f"Global util 2: {u_global(global_optimized, exec_times, costs, weights)}")
