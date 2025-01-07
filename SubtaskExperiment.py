@@ -17,7 +17,7 @@ deadlines = {1: 100000000, 2: 100000000, 3: 100000000}
 weights = (0.5, 0.5)
 budgets = {1: 100000000, 2: 100000000, 3: 100000000}
 
-num_subtasks_range = range(1, 10)
+num_subtasks_range = range(1, 11)
 genetic_utilities = []
 global_utilities = []
 
@@ -43,6 +43,13 @@ def experiment_iteration(num_subtasks):
     # Calculate Utilities
     genetic_util = u_global(optimized_allocation, exec_times, costs, weights)
     global_util = u_global(global_optimized, exec_times, costs, weights)
+    print("\n genetically optimized allocation Matrix")
+    print(f"\n{optimized_allocation}")
+    print(f"\nObjective Value genetic: {genetic_util}")
+
+    print("\n Globally optimized allocation Matrix")
+    print(f"\n{optimized_allocation}")
+    print(f"\nObjective Value global: {global_util}")
 
     return genetic_util, global_util
 
@@ -53,6 +60,7 @@ with ThreadPoolExecutor() as executor:
 
 # Extract Results
 genetic_utilities, global_utilities = zip(*results)
+
 
 # Plot Results
 plt.figure(figsize=(10, 6))
