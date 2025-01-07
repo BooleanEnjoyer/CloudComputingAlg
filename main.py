@@ -32,11 +32,11 @@ def u_global(a, exec_times, costs, weights):
     total_u = 0
 
     def overload_penalty(j):
-        return sum(a[i, j] for i in range(num_tasks))
+        return sum(a[i][j] for i in range(num_tasks))
 
     def u_local(i):
-        t = max(max(1, a[i,j]) * exec_times[i + 1, j + 1] * overload_penalty(j) for j in range(num_resources))
-        e = sum(a[i,j] * costs[i + 1, j + 1] for j in range(num_resources))
+        t = max(max(1, a[i][j]) * exec_times[i + 1, j + 1] * overload_penalty(j) for j in range(num_resources))
+        e = sum(a[i][j] * costs[i + 1, j + 1] for j in range(num_resources))
         u = wt * t + we * e
         return 1/u if u > 0 else 0
     
@@ -78,12 +78,15 @@ for task_info in allocation_info:
 print("\nAllocation Matrix for All Tasks:")
 for row in allocation_matrix:
     print(row)
-print(f"\nObjective Value: {obj_value}")
+print(f"\nObjective Value: {u_global(allocation_matrix, exec_times, costs, weights)}")
 
 print("\n genetically optimized allocation Matrix")
 for row in optimized_allocation:
     print(row)
+print(f"\nObjective Value: {u_global(optimized_allocation, exec_times, costs, weights)}")
 
 global_optimized = global_optimization(tasks, task_subtasks, resources, costs, exec_times, deadlines, budgets, weights, tl)
 for row in global_optimized:
     print(row)
+
+print(f"\nObjective Value: {u_global(global_optimized, exec_times, costs, weights)}")
