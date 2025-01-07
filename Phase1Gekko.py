@@ -35,7 +35,7 @@ def independent_optimization(tasks, task_subtasks, resources, costs, exec_times,
             m.Equation(sum(b[i, j] for i in task_subtasks[task_index]) <= 1)
 
         # Constaint 12
-        m.Equation(T_turnaround >= sum(tl) + sum(exec_times[task_index, j] * b[i, j] for i in task_subtasks[task_index] for j in resources))
+        m.Equation(T_turnaround == sum(tl) + sum(exec_times[task_index, j] * b[i, j] for i in task_subtasks[task_index] for j in resources))
 
         m.solve(disp=True)
 
