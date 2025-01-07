@@ -3,9 +3,25 @@ from concurrent.futures import ThreadPoolExecutor
 from Phase1Gekko import independent_optimization
 from Phase2 import genetic_optimization
 from generic import global_optimization
-from main import u_global
 from Exper1data import exec_times, costs
 import random
+
+def u_global(a, exec_times, costs, weights):
+    wt, we = weights
+    num_tasks = len(a)
+    num_resources = len(a[0])
+
+    def overload_penalty(j):
+        return sum(a[i][j] for i in range(num_tasks))
+
+    def u_local(i):
+        t = max(min(1, a[i][j]) * exec_times[i + 1, j + 1] * overload_penalty(j) for j in range(num_resources))
+        e = sum(a[i][j] * costs[i + 1, j + 1] for j in range(num_resources))
+        u = wt * t + we * e
+        return 1/u if u > 0 else 0
+
+    return sum(u_local(i) for i in range(num_tasks))
+
 
 tasks = [1, 2, 3]
 resources = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -17,7 +33,7 @@ deadlines = {1: 100000000, 2: 100000000, 3: 100000000}
 weights = (0.5, 0.5)
 budgets = {1: 100000000, 2: 100000000, 3: 100000000}
 
-num_subtasks_range = range(1, 11)
+num_subtasks_range = 1
 genetic_utilities = []
 global_utilities = []
 
