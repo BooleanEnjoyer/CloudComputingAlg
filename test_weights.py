@@ -57,13 +57,13 @@ print(weightss)
 
 # Plot the data
 plt.figure(figsize=(8, 6))
-plt.plot(result[0], label="independent", marker='o')
-plt.plot(result[1], label="genetic", marker='o')
-plt.plot(result[2], label="global", marker='o')
+plt.plot(results[0], label="independent", marker='o')
+plt.plot(results[1], label="genetic", marker='o')
+plt.plot(results[2], label="global", marker='o')
 
 # Add labels, title, and legend
 plt.xlabel("percent of weight going to time")
-plt.xticks(ticks=range(len(results[0])), labels=range(0, len(results[0]) * 10, 10))
+# plt.xticks(ticks=range(len(results[0])), labels=[f"{i * 10}%" for i in range(len(results[0]))])
 plt.ylabel("utility")
 plt.title("weights")
 plt.legend()
