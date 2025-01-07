@@ -35,7 +35,7 @@ def u_global(a, exec_times, costs, weights):
         return sum(a[i][j] for i in range(num_tasks))
 
     def u_local(i):
-        t = max(max(1, a[i][j]) * exec_times[i + 1, j + 1] * overload_penalty(j) for j in range(num_resources))
+        t = max(min(1, a[i][j]) * exec_times[i + 1, j + 1] * overload_penalty(j) for j in range(num_resources))
         e = sum(a[i][j] * costs[i + 1, j + 1] for j in range(num_resources))
         u = wt * t + we * e
         return 1/u if u > 0 else 0
