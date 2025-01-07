@@ -1,5 +1,6 @@
 from Phase1 import independent_optimization
 from util import create_costs_matrix
+from Phase2 import genetic_optimization
 
 # tl dont have to be number also like amount of tasks technically
 
@@ -47,6 +48,8 @@ weights = (0.5, 0.5)
 
 allocation_info, allocation_matrix, obj_value = independent_optimization(tasks, task_subtasks, resources, costs, exec_times, deadlines, budgets, weights, tl)
 
+optimized_allocation = genetic_optimization(tasks, resources, exec_times, allocation_matrix)
+
 print("Allocation Info for All Tasks:\n")
 for task_info in allocation_info:
     print(task_info)
@@ -56,5 +59,8 @@ for task_info in allocation_info:
 print("\nAllocation Matrix for All Tasks:")
 for row in allocation_matrix:
     print(row)
-
 print(f"\nObjective Value: {obj_value}")
+
+print("\n genetically optimized allocation Matrix")
+for row in optimized_allocation:
+    print(row)
