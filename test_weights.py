@@ -3,6 +3,8 @@ from Phase1Gekko import independent_optimization
 from util import create_costs_matrix
 from Phase2 import genetic_optimization
 from generic import global_optimization
+import matplotlib.pyplot as plt
+
 
 tasks = [1, 2, 3]
 price_vector = [1, 1.2, 1.5, 1.8, 2]
@@ -50,3 +52,21 @@ for weights in weightss:
     print(globali.social_justices(independenti.a))
 for result in results:
     print([round(x,2) for x in result])
+
+# Plot the data
+plt.figure(figsize=(8, 6))
+plt.plot(result[0], label="independent", marker='o')
+plt.plot(result[1], label="genetic", marker='o')
+plt.plot(result[2], label="global", marker='o')
+
+# Add labels, title, and legend
+plt.xlabel("percent of weight going to time")
+plt.xticks(ticks=range(len(results[0])), labels=range(0, len(results[0]) * 10, 10))
+plt.ylabel("utility")
+plt.title("weights")
+plt.legend()
+plt.grid()
+
+# Show the plot
+plt.show()
+
