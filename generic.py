@@ -31,10 +31,10 @@ def global_optimization(tasks, task_subtasks, resources, costs, exec_times, dead
         return m.sum(list(l))
 
     a = {}
-
     for i in tasks:
         for j in resources:
             a[i,j] = m.Var(value=0, lb=0, integer=True, name=f"a_{i}_{j}")
+    
     T_turnaround = {}
     for i in tasks:
         T_turnaround[i] = m.Var(value=0, name=f"T_turnaround_{i}")
@@ -58,17 +58,18 @@ def global_optimization(tasks, task_subtasks, resources, costs, exec_times, dead
 
     for i in tasks:
         for j in resources:
-            m.Equation(T_turnaround[i] >= m.min3(1, a[i, j]) * exec_times[i,j] * overload_penalty(j))
+            m.Equation(T_turnaround[i] >= a[i, j] * exec_times[i,j] * overload_penalty(i, j))
 
     # all subtasks are being done constraint
+
     for i in tasks:
         m.Equation(sum(a[i,j] for j in resources) == len(task_subtasks[i]))
     
-    # budget constraint
+
     for i in tasks:
         m.Equation(sum(a[i, j] * costs[i, j] for j in resources) <= budgets[i])
 
-    # deadline constraint
+   
     for i in tasks:
         m.Equation(T_turnaround[i] <= deadlines[i])
 

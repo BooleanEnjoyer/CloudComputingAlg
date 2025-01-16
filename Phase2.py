@@ -31,21 +31,21 @@ def genetic_optimization(tasks, resources, exec_times, a_input):
         t = max(a[i-1][j-1] * exec_times[i, j] * overload_penalty(a, j) for j in resources)
         return 1 / t if t > 0 else 9999999999
 
+    # wybór gracza i
     def min_global(a, j):
-        # gracze jednocześnie używający zasobu j
-        mts_val = mts(a, j)
-        # gracze zyskujący na przeniesieniu
-        nsts = [] #negative spelr task set
+        mts_val = mts(a, j) # gracze jednocześnie używający zasobu j
+        nsts = [] # gracze zyskujący na zmianie strategii
         for i in mts_val:
-            q = min_single(a, i, j) # wybór alternatywnego zasobu
+            q = min_single(a, i, j) # wybór alternatywnego zasobu q
             if q != -1:
                 spelr_val = spelr(a, i, j, q) # koszt dla danego gracza
                 if spelr_val < 0:
                     nsts.append((i, q))
 
+        # żadnemu użytkownikowi nie opłaca się zmiana strategii
         if len(nsts) == 0:
             return -1
-        gelrs = [(i,gelr(a, i, j, q)) for (i, q) in nsts]
+        gelrs = [(i,gelr(a, i, j, q)) for (i, q) in nsts] # koszty społeczne
         return min(gelrs, key=lambda x: x[1])[0]
 
 
@@ -69,12 +69,11 @@ def genetic_optimization(tasks, resources, exec_times, a_input):
             # przeciążone zasoby używane przez gracza z indeksem i
             ms = sorted(mr(a, i), key=lambda j: exec_times[i, j] * overload_penalty(a, j), reverse=True)
             print(ms, i, n)
-            for resource_from in ms:
+            for resource_from in ms: # obecnie rozważany zasób p
                 player = min_global(a, resource_from) # wybór gracza
                 if player != -1:
                     resource_to = min_single(a, player, resource_from) # wybór zasobu
-                    ralloc(a, player, resource_from, resource_to) # przeniesienie
-                    print(a)
+                    ralloc(a, player, resource_from, resource_to) # krok ewolucji
                     flag = True
             if i == n:
                 if flag == False:
